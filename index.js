@@ -1,139 +1,63 @@
-const express = require('express');
+//Configurações iniciais
+const express = require('express'); /**No node.js há essa maneira de
+importar arquivos, usando o require, onde o node vai procurar o arquivo */
+const app = express();/**Inicialização da variável app - padrão bem utilizado.
+E, esse app vai executar o express como uma função, ou seja, inicializando
+o express de fato */
 const { default: mongoose } = require('mongoose');
-const app = express();
-const Mongoose = require('mongoose')
 
-const Person = require('./models/Person')
+require('dotenv').config()
 
+//FORMAS DE LER JSON- MIDDLEWARES
 
+/**Para configurar essa forma usa-se middlewares, ou seja, recurso que são 
+ * executados entre as requisições e respostas
+ */
 app.use(
-    express.urlencoded({
-        extended:true
-    })
+  express.urlencoded({
+      extended:true
+  })
 )
-
-
 app.use(express.json())
 
-// rotas
-
-app.post('/person', async (req, res) => {
-    const { name, salary, approved } = req.body
-  
-    const person = {
-      name,
-      salary,
-      approved,
-    }
-  
-    try {
-      await Person.create(person)
-  
-      res.status(201).json({ message: 'Pessoa inserida no sistema com sucesso!' })
-    } catch (error) {
-      res.status(500).json({ erro: error })
-    }
-  })
-  
-  app.get('/person', async (req, res) => {
-    try {
-      const people = await Person.find()
-  
-      res.status(200).json(people)
-    } catch (error) {
-      res.status(500).json({ erro: error })
-    }
-  })
 
 
-  app.get('/person/:id', async (req, res) => {
-    const id = req.params.id
-  
-    try {
-      const person = await Person.findOne({ _id: id })
-  
-      if (!person) {
-        res.status(422).json({ message: 'Usuário não encontrado!' })
-        return
-      }
-  
-      res.status(200).json(person)
-    } catch (error) {
-      res.status(500).json({ erro: error })
-    }
-  })
+//ROTA INICIAL / ENDPOINT
 
-
-  app.patch('/person/:id', async (req, res) => {
-    const id = req.params.id
-  
-    const { name, salary, approved } = req.body
-  
-    const person = {
-      name,
-      salary,
-      approved,
-    }
-  
-    try {
-      const updatedPerson = await Person.updateOne({ _id: id }, person)
-  
-      if (updatedPerson.matchedCount === 0) {
-        res.status(422).json({ message: 'Usuário não encontrado!' })
-        return
-      }
-  
-      res.status(200).json(person)
-    } catch (error) {
-      res.status(500).json({ erro: error })
-    }
-  })
-  
-  app.delete('/person/:id', async (req, res) => {
-    const id = req.params.id
-  
-    const person = await Person.findOne({ _id: id })
-  
-    if (!person) {
-      res.status(422).json({ message: 'Usuário não encontrado!' })
-      return
-    }
-  
-    try {
-      await Person.deleteOne({ _id: id })
-  
-      res.status(200).json({ message: 'Usuário removido com sucesso!' })
-    } catch (error) {
-      res.status(500).json({ erro: error })
-    }
-  })
-  
-
-
-
-
-
-
-
-
-
-
-
-app.get('/', (req, res) => {
-    res.json({message: 'Oi express'})
+/**Pega-se o app e coloca na sua frente . + algum verbo http que eu queira disponibilizar essa rota  */
+app.get('/' /** Determinação de um ponto de acesso (endpoint) 
+A rota "/" é a home de qualquer site */, 
+(req, res /** por mais que um dos dois argumentos não seja utilizado, é um padrão sempre coloca-los juntos */) => {
+  res.json({message: 'Oi express'})
+  /**em res.json, esta sendo dito que a resposta para a rota "/" será um JSON */
 })
+// esse código é uma maneira de ler requisições
 
 
-const url = "mongodb://rodrigoseabra01:U5YNAshpz1XppAtR@ac-1hqtbwu-shard-00-00.r6bfifi.mongodb.net:27017,ac-1hqtbwu-shard-00-01.r6bfifi.mongodb.net:27017,ac-1hqtbwu-shard-00-02.r6bfifi.mongodb.net:27017/?ssl=true&replicaSet=atlas-mllo75-shard-0&authSource=admin&retryWrites=true&w=majority"
+//rotas da api simplificadas
+const personRoutes = require('./routes/personRoutes')
 
+app.use('/person', personRoutes)
 
-mongoose.connect(url)
-.then( () => {
+//ENTREGAR UMA PORTA E CONECTAR-SE COM O MONGODB
+
+// as informações dbuser e dbpassword devem estar em um arquivo dotenv
+const url = `mongodb://${process.env.DB_USER}:${process.env.DB_PASSWORD}@ac-1hqtbwu-shard-00-00.r6bfifi.mongodb.net:27017,ac-1hqtbwu-shard-00-01.r6bfifi.mongodb.net:27017,ac-1hqtbwu-shard-00-02.r6bfifi.mongodb.net:27017/?ssl=true&replicaSet=atlas-mllo75-shard-0&authSource=admin&retryWrites=true&w=majority`
+
+mongoose.connect(url) // - esse conect é promise base, ou seja, junto com ele tem o then e  o catch
+.then /**o que eu quero fazer quando der certo */ ( () => {
     console.log("Conectamos ao mongo db")
-
-    app.listen(3000)
+    app.listen(3000) // é crucial disponibilizar a rota que foi especificada no script do nodemon
 })
-.catch((err) => {
+.catch/**o que eu quero fazer quando der errado */ ((err) => {
     console.log(err)
 })
+
+
+
+
+
+
+
+
 

@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+const mongoose = require('mongoose'); //chamando o mongoose
 
 const Person = mongoose.model('Person', {
     name:String,
@@ -6,4 +6,8 @@ const Person = mongoose.model('Person', {
     approved:Boolean,
 })
 
-module.exports = Person
+/** Model é um metodo do mongoose que vai criar a collection no banco de dados com o nome descrito
+ * neste caso é 'Person'
+*/
+
+module.exports = Person //exportar
