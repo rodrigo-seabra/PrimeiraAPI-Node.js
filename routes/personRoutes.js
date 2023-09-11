@@ -18,7 +18,7 @@ router.post('/', async (req, res) => { /**Como tem q se fazer uma comunicação 
    const { name, salary, approved } = req.body 
  
  
-   if(!name){
+   if(!name){ //coferindo os dados
      res.status(422).json( {error: 'O nome é obrigatório' })
      return //esse return aqui serve para finalizar a execução da requisição aqui
    }
@@ -62,7 +62,7 @@ router.get("/:id", async (req, res) => {
     try {
         const person = await Person.findOne({_id: id}) //metodo de encontrar um registro único
         
-        if(!person){
+        if(!person){ //conferindo os dados
             res.status(422).json({ message: 'Usuário não encontrado!' })
             return //esse return aqui serve para finalizar a execução da requisição aqui
         }
@@ -92,9 +92,9 @@ router.patch('/:id', async (req, res) => {
     }
   
     try {
-      const updatedPerson = await Person.updateOne({ _id: id }, person)
+      const updatedPerson = await Person.updateOne({ _id: id }, person) //assim como findOne, essa função aqui procura pelo id e atualiza de forma individual
   
-      if (updatedPerson.matchedCount === 0) {
+      if (updatedPerson.matchedCount === 0) { //conferindo os dados
         res.status(422).json({ message: 'Usuário não encontrado!' })
         return
       }
@@ -105,21 +105,20 @@ router.patch('/:id', async (req, res) => {
     }
   })
 
+
 //Delete - deletar dados
-
-
 router.delete('/:id', async (req, res) => {
     const id = req.params.id
   
     const person = await Person.findOne({ _id: id })
   
-    if (!person) {
+    if (!person) { //conferÊncia
       res.status(422).json({ message: 'Usuário não encontrado!' })
       return
     }
   
     try {
-      await Person.deleteOne({ _id: id })
+      await Person.deleteOne({ _id: id }) //essa função assim com findOne e updateOne serve para procurar dados "individuais" no banco e exclui
   
       res.status(200).json({ message: 'Usuário removido com sucesso!' })
     } catch (error) {
@@ -127,4 +126,4 @@ router.delete('/:id', async (req, res) => {
     }
   })
 
- module.exports = router
+ module.exports = router // export do router, sobistituir app por router no index

@@ -5,8 +5,9 @@ const app = express();/**Inicialização da variável app - padrão bem utilizad
 E, esse app vai executar o express como uma função, ou seja, inicializando
 o express de fato */
 const { default: mongoose } = require('mongoose');
+require('dotenv').config() //IMPORT DA VARIAVEL DE AMBIENTE
 
-require('dotenv').config()
+
 
 //FORMAS DE LER JSON- MIDDLEWARES
 
@@ -34,10 +35,11 @@ A rota "/" é a home de qualquer site */,
 // esse código é uma maneira de ler requisições
 
 
-//rotas da api simplificadas
+//ROTAS DA API SIMPLIFICADA
 const personRoutes = require('./routes/personRoutes')
 
 app.use('/person', personRoutes)
+
 
 //ENTREGAR UMA PORTA E CONECTAR-SE COM O MONGODB
 
@@ -54,6 +56,8 @@ mongoose.connect(url) // - esse conect é promise base, ou seja, junto com ele t
 })
 
 
+//OBS FAZER DOWNLOAD = npm install express nodemon mongoose dotenv
+//baixar essa versao do mongoDB = npm install mongodb@2.2.12
 
 
 
